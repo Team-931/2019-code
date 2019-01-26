@@ -15,9 +15,9 @@
 #include <frc/SpeedControllerGroup.h>
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
-#include <DigitalInput.h>
+#include <frc/DigitalInput.h>
 #include <frc/Encoder.h>
-#include <CameraServer.h>
+#include <cameraserver/CameraServer.h>
 
 class Robot : public frc::TimedRobot {
   ::WPI_TalonSRX rightfront{1};
