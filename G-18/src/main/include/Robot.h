@@ -5,6 +5,8 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+// This is a clarification of the Way
+
 #pragma once
 
 #include <string>
