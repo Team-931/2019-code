@@ -11,14 +11,8 @@
 
 #include <string>
 #include <ctre/phoenix.h>
-#include <frc/drive/DifferentialDrive.h>
-#include <frc/DoubleSolenoid.h>
 #include <AHRS.h>
-#include <frc/SpeedControllerGroup.h>
-#include <frc/TimedRobot.h>
-#include <frc/smartdashboard/SendableChooser.h>
-#include <frc/DigitalInput.h>
-#include <frc/Encoder.h>
+#include <frc/WPIlib.h>
 #include <cameraserver/CameraServer.h>
 
 class Robot : public frc::TimedRobot {
@@ -47,12 +41,23 @@ class Robot : public frc::TimedRobot {
 
   frc::DigitalInput limitright{4};
   frc::DigitalInput limitleft{5};
-  frc::DigitalInput linesensor{6};
-  frc::DigitalInput linesensor2{7};
+  frc::AnalogInput linesensor{0};
+  frc::AnalogInput linesensor2{1};
+  static inline bool usethresshold (frc::AnalogInput const&line)
+  {return line.GetVoltage()>2;}
 
   frc::Encoder leftEncoder{0,1};//,true}; //TO DO check if right on to reverse
   frc::Encoder rightEncoder{2,3};
+  frc::Encoder armEncoder{6,7};
+
+//stating user interface items
+  frc::Joystick driverstick{0};
+  frc::Joystick operatorstick{1};
+
+  bool arcadedrive {true};
+  
  public:
+  void robotcontrol();
   void RobotInit() override;
   void RobotPeriodic() override;
   void AutonomousInit() override;

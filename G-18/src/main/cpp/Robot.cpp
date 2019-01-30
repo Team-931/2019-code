@@ -67,6 +67,11 @@ void Robot::TeleopPeriodic() {}
 
 void Robot::TestPeriodic() {}
 
+void Robot::robotcontrol() {
+  if (arcadedrive) driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (0));//TO DO revers
+    else driver.TankDrive (-driverstick.GetRawAxis (1),-driverstick.GetRawAxis (3)); 
+}
+
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }
 #endif
