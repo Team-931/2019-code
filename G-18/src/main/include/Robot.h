@@ -26,18 +26,17 @@ class Robot : public frc::TimedRobot {
 
   ::WPI_TalonSRX rightarm{5};//Magnetic encoder is attached to this
   ::WPI_TalonSRX leftarm{6};//TO Do find out which motor magnetic encoder is attached to
-  ::WPI_TalonSRX rightgrip{9};
-  ::WPI_TalonSRX leftgrip{10};
+  ::WPI_TalonSRX rightgripW{7};//W=wheel
+  ::WPI_TalonSRX leftgripW{8};
   frc::SpeedControllerGroup arms {rightarm,leftarm};
-  frc::SpeedControllerGroup gripers {rightgrip,leftgrip};
+  frc::SpeedControllerGroup gripers {rightgripW,leftgripW};
 
-  ::WPI_TalonSRX rightfang{7};
-  ::WPI_TalonSRX leftfang{8};
-  frc::SpeedControllerGroup fangs {rightfang,leftfang};
-  frc::DoubleSolenoid rightwheelearm {0,4},
-    leftwheelearm {1,5},
-    righttakeoff {2,6},
-    lefttakeoff {3,7};
+  ::WPI_TalonSRX rightfangw{9};
+  ::WPI_TalonSRX leftfangw{10};
+  ::WPI_TalonSRX centerfang{11};
+  frc::SpeedControllerGroup fangs {rightfangw,leftfangw};
+  frc::DoubleSolenoid centergriparm {0,1},
+    centertakeoff {2,3};
 
   frc::DigitalInput limitright{4};
   frc::DigitalInput limitleft{5};
@@ -53,10 +52,14 @@ class Robot : public frc::TimedRobot {
 //stating user interface items
   frc::Joystick driverstick{0};
   frc::Joystick operatorstick{1};
+  //Climb either dashboard or press buttons
 
   bool arcadedrive {true};
+
+  bool  cargoarm {true};
   
  public:
+  void armcontrol();
   void robotcontrol();
   void RobotInit() override;
   void RobotPeriodic() override;

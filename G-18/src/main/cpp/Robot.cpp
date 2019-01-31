@@ -15,8 +15,16 @@ void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
-  rightarm.ConfigSelectedFeedbackSensor (CTRE_MagEncoder_Absolute);//TO DO invert encoders and motors as necessary
+  //rightarm.ConfigSelectedFeedbackSensor (CTRE_MagEncoder_Absolute);//TO DO invert encoders and motors as necessary
   auto cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
+  rightgripW.SetInverted(true);
+  rightarm.SetNeutralMode(/*TalonSRX::*/Brake);
+  rightgripW.SetNeutralMode(/*TalonSRX::*/Brake);
+  leftarm.SetNeutralMode(/*TalonSRX::*/Brake);
+  leftgripW.SetNeutralMode(/*TalonSRX::*/Brake);
+  rightfangw.SetNeutralMode(/*TalonSRX::*/Brake);
+  leftfangw.SetNeutralMode(/*TalonSRX::*/Brake);
+  centerfang.SetNeutralMode(/*TalonSRX::*/Brake);
 }
 
 /**
@@ -63,13 +71,38 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {}
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  robotcontrol();
+  armcontrol();
+}
 
 void Robot::TestPeriodic() {}
 
 void Robot::robotcontrol() {
-  if (arcadedrive) driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (0));//TO DO revers
-    else driver.TankDrive (-driverstick.GetRawAxis (1),-driverstick.GetRawAxis (3)); 
+  if (driverstick.GetRawButton(9))
+  arcadedrive=true;
+  else if (driverstick.GetRawButton(10))
+  arcadedrive=false;
+  if (arcadedrive) 
+    driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (0));//TO DO revers
+    else 
+      driver.TankDrive (-driverstick.GetRawAxis (1),-driverstick.GetRawAxis (3)); 
+  
+}
+void Robot::armcontrol(){
+  arms.Set (operatorstick.GetRawAxis(0));//TO DO reverse if nessicary
+  if (operatorstick.GetRawButton(7)){
+    centergriparm.Set(DoubleSolenoid::kReverse);
+    cargoarm=true;
+  }
+  else if (operatorstick.GetRawButton(8)){
+    centergriparm.Set(DoubleSolenoid::kForward);
+    cargoarm=false;
+  }
+  if (cargoarm)
+    gripers.Set(operatorstick.GetRawAxis(3));//To Do reverse if needed, and check speed
+  else
+    gripers.Set(-operatorstick.GetRawAxis(3));
 }
 
 #ifndef RUNNING_FRC_TESTS
