@@ -24,11 +24,9 @@ class Robot : public frc::TimedRobot {
   frc::SpeedControllerGroup left {leftfront,leftback};
   frc::DifferentialDrive driver {left,right};//TO DO check weather left or right needs to be inverted
 
-  ::WPI_TalonSRX rightarm{5};//Magnetic encoder is attached to this
-  ::WPI_TalonSRX leftarm{6};//TO Do find out which motor magnetic encoder is attached to
+  ::WPI_TalonSRX arm{5};
   ::WPI_TalonSRX rightgripW{7};//W=wheel
   ::WPI_TalonSRX leftgripW{8};
-  frc::SpeedControllerGroup arms {rightarm,leftarm};
   frc::SpeedControllerGroup gripers {rightgripW,leftgripW};
 
   ::WPI_TalonSRX rightfangw{9};
