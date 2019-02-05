@@ -18,7 +18,8 @@ void Robot::RobotInit() {
   //rightarm.ConfigSelectedFeedbackSensor (CTRE_MagEncoder_Absolute);//TO DO invert encoders and motors as necessary
   auto cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
   rightgripW.SetInverted(true);
-  arm.SetNeutralMode(Brake);
+  leftarm.SetNeutralMode(Brake);
+  rightarm.SetNeutralMode(Brake);
   rightgripW.SetNeutralMode(Brake);
   leftgripW.SetNeutralMode(Brake);
   rightfangw.SetNeutralMode(Brake);
@@ -91,14 +92,16 @@ void Robot::robotcontrol() {
   
 }
 void Robot::armcontrol(){
-  arm.Set (operatorstick.GetRawAxis(0));//TO DO reverse if nessicary
+  arms.Set (operatorstick.GetRawAxis(0));//TO DO reverse if nessicary
   if (operatorstick.GetRawButton(7)){
-    centergriparm.Set(DoubleSolenoid::kReverse);
-    cargoarm=true;
-  }
-  else if (operatorstick.GetRawButton(8)){
     centergriparm.Set(DoubleSolenoid::kForward);
-    cargoarm=false;
+    cargoarm=false;//TO DO reverse if needed
+  }
+  else 
+    centergriparm.Set(DoubleSolenoid::kReverse);
+  
+  if (operatorstick.GetRawButton(8)){
+    cargoarm=true;
   }
   if (cargoarm)
     gripers.Set(operatorstick.GetRawAxis(3));//To Do reverse if needed, and check speed
