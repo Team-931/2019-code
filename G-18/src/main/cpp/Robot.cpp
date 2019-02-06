@@ -27,6 +27,7 @@ void Robot::RobotInit() {
   centerfang.SetNeutralMode(Brake);
   left.SetInverted(true);
   leftfangw.SetInverted(true);
+  anglearm.SetInputRange(farbackarm,farfrontarm)
 }
 
 /**
@@ -108,6 +109,7 @@ void Robot::armcontrol(){
   else
     gripers.Set(-operatorstick.GetRawAxis(3));
 }
+
 
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }

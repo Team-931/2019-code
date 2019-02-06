@@ -57,8 +57,12 @@ class Robot : public frc::TimedRobot {
   bool arcadedrive {true};
 
   bool  cargoarm {true};
+
+  int endgame1 {0};//phase 0 not endgame, phase 1 climb/start endgame,phase 2 stop main wheels, phase 3 bring up pogostick, phase 4 move onto plateform, phase 5 stop
   
  public:
+  void endgameinit();
+  void endgameperiodic();
   void armcontrol();
   void robotcontrol();
   void RobotInit() override;
@@ -70,9 +74,15 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
  private:
+  frc::PIDController anglearm{.1,0,0,&armEncoder,&arms};
   frc::SendableChooser<std::string> m_chooser;
   const std::string kAutoNameDefault = "Default";
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
   ::AHRS navx {::SPI::kMXP};
+  static constexpr double degreetick (double degreeangle){
+  return (degreeangle-115)/360*1024;//IF want change back for the dashboard
+  }
+  constexpr static double farbackarm=degreetick(200), farfrontarm=degreetick(-20), startingposition=0,
+  endgame=degreetick(65), shootlow=degreetick(0), shoothigh=degreetick(60);
 };
