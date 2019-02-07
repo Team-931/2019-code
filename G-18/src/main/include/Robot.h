@@ -14,7 +14,10 @@
 #include <AHRS.h>
 #include <frc/WPIlib.h>
 #include <cameraserver/CameraServer.h>
-
+static constexpr double degreetick (double degreeangle){
+  return (degreeangle-115)/360*1024;//IF want change back for the dashboard
+  }
+  
 class Robot : public frc::TimedRobot {
   ::WPI_TalonSRX rightfront{1};
   ::WPI_TalonSRX rightback{2};
@@ -38,8 +41,8 @@ class Robot : public frc::TimedRobot {
   frc::DoubleSolenoid centergriparm {0,1},
     centertakeoff {2,3};
 
-  frc::DigitalInput limitright{4};
-  frc::DigitalInput limitleft{5};
+  frc::DigitalInput limitpogo{4};
+  frc::DigitalInput limitleft{5};//IF needed
   frc::AnalogInput linesensor{0};
   frc::AnalogInput linesensor2{1};
   static inline bool usethresshold (frc::AnalogInput const&line)
@@ -58,7 +61,9 @@ class Robot : public frc::TimedRobot {
 
   bool  cargoarm {true};
 
-  int endgame1 {0};//phase 0 not endgame, phase 1 climb/start endgame,phase 2 stop main wheels, phase 3 bring up pogostick, phase 4 move onto plateform, phase 5 stop
+  bool end2 ();
+
+  int endgamephase {0};//phase 0 not endgame, phase 1 climb/start endgame,phase 2 stop main wheels, phase 3 bring up pogostick, phase 4 move onto plateform, phase 5 stop
   
  public:
   void endgameinit();
@@ -80,9 +85,6 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
   ::AHRS navx {::SPI::kMXP};
-  static constexpr double degreetick (double degreeangle){
-  return (degreeangle-115)/360*1024;//IF want change back for the dashboard
-  }
   constexpr static double farbackarm=degreetick(200), farfrontarm=degreetick(-20), startingposition=0,
   endgame=degreetick(65), shootlow=degreetick(0), shoothigh=degreetick(60);
 };

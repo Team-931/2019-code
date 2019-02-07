@@ -27,7 +27,7 @@ void Robot::RobotInit() {
   centerfang.SetNeutralMode(Brake);
   left.SetInverted(true);
   leftfangw.SetInverted(true);
-  anglearm.SetInputRange(farbackarm,farfrontarm)
+  anglearm.SetInputRange(farbackarm,farfrontarm);
 }
 
 /**
@@ -75,8 +75,14 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
+  if (endgamephase==0){
   robotcontrol();
   armcontrol();
+  if (driverstick.GetRawButton(6)&&driverstick.GetRawButton(8)){
+    endgameinit();
+  }
+ }
+ else (endgameperiodic());
 }
 
 void Robot::TestPeriodic() {}
