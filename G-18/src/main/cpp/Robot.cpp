@@ -27,7 +27,7 @@ void Robot::RobotInit() {
   centerfang.SetNeutralMode(Brake);
   left.SetInverted(true);
   leftfangw.SetInverted(true);
-  anglearm.SetInputRange(farbackarm,farfrontarm)
+  anglearm.SetInputRange(farbackarm,farfrontarm);
 }
 
 /**

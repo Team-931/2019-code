@@ -14,7 +14,10 @@
 #include <AHRS.h>
 #include <frc/WPIlib.h>
 #include <cameraserver/CameraServer.h>
-
+static constexpr double degreetick (double degreeangle){
+  return (degreeangle-115)/360*1024;//IF want change back for the dashboard
+  }
+  
 class Robot : public frc::TimedRobot {
   ::WPI_TalonSRX rightfront{1};
   ::WPI_TalonSRX rightback{2};
@@ -80,9 +83,6 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
   ::AHRS navx {::SPI::kMXP};
-  static constexpr double degreetick (double degreeangle){
-  return (degreeangle-115)/360*1024;//IF want change back for the dashboard
-  }
   constexpr static double farbackarm=degreetick(200), farfrontarm=degreetick(-20), startingposition=0,
   endgame=degreetick(65), shootlow=degreetick(0), shoothigh=degreetick(60);
 };
