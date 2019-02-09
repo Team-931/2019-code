@@ -38,11 +38,11 @@ class Robot : public frc::TimedRobot {
   ::WPI_TalonSRX leftfangw{10};
   ::WPI_TalonSRX centerfang{11};
   frc::SpeedControllerGroup fangs {rightfangw,leftfangw};
+  frc::DifferentialDrive equalup {left,centerfang};
   frc::DoubleSolenoid centergriparm {0,1},
     centertakeoff {2,3};
 
   frc::DigitalInput limitpogo{4};
-  frc::DigitalInput limitleft{5};//IF needed
   frc::AnalogInput linesensor{0};
   frc::AnalogInput linesensor2{1};
   static inline bool usethresshold (frc::AnalogInput const&line)
@@ -61,14 +61,13 @@ class Robot : public frc::TimedRobot {
 
   bool  cargoarm {true};
 
-  bool end2 ();
-
   int endgamephase {0};//phase 0 not endgame, phase 1 climb/start endgame,phase 2 stop main wheels, phase 3 bring up pogostick, phase 4 move onto plateform, phase 5 stop
   
  public:
   void endgameinit();
   void endgameperiodic();
   void armcontrol();
+  void armdegree();
   void robotcontrol();
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -87,4 +86,5 @@ class Robot : public frc::TimedRobot {
   ::AHRS navx {::SPI::kMXP};
   constexpr static double farbackarm=degreetick(200), farfrontarm=degreetick(-20), startingposition=0,
   endgame=degreetick(65), shootlow=degreetick(0), shoothigh=degreetick(60);
+  frc::Timer time;
 };

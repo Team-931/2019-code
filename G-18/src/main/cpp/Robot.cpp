@@ -16,7 +16,7 @@ void Robot::RobotInit() {
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   //rightarm.ConfigSelectedFeedbackSensor (CTRE_MagEncoder_Absolute);//TO DO invert encoders and motors as necessary
-  auto cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
+  cs::UsbCamera cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
   rightgripW.SetInverted(true);
   leftarm.SetNeutralMode(Brake);
   rightarm.SetNeutralMode(Brake);
@@ -28,6 +28,7 @@ void Robot::RobotInit() {
   left.SetInverted(true);
   leftfangw.SetInverted(true);
   anglearm.SetInputRange(farbackarm,farfrontarm);
+  armEncoder.SetIndexSource(8);
 }
 
 /**
@@ -52,6 +53,7 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
+  centertakeoff.Set(DoubleSolenoid::kForward);
   m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
@@ -94,12 +96,12 @@ void Robot::robotcontrol() {
   arcadedrive=false;
   if (arcadedrive) 
     driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (0));//TO DO revers
-    else 
-      driver.TankDrive (-driverstick.GetRawAxis (1),-driverstick.GetRawAxis (3)); 
+  else 
+    driver.TankDrive (-driverstick.GetRawAxis (1),-driverstick.GetRawAxis (3)); 
   
 }
 void Robot::armcontrol(){
-  arms.Set (operatorstick.GetRawAxis(0));//TO DO reverse if nessicary
+  armdegree();
   if (operatorstick.GetRawButton(7)){
     centergriparm.Set(DoubleSolenoid::kForward);
     cargoarm=false;//TO DO reverse if needed
@@ -114,6 +116,9 @@ void Robot::armcontrol(){
     gripers.Set(operatorstick.GetRawAxis(3));//To Do reverse if needed, and check speed
   else
     gripers.Set(-operatorstick.GetRawAxis(3));
+}
+void Robot::armdegree(){
+arms.Set (operatorstick.GetRawAxis(0));//TO DO reverse if nessicary
 }
 
 
