@@ -39,8 +39,8 @@ class Robot : public frc::TimedRobot {
   ::WPI_TalonSRX centerfang{11};
   frc::SpeedControllerGroup fangs {rightfangw,leftfangw};
   frc::DifferentialDrive equalup {left,centerfang};
-  frc::DoubleSolenoid centergriparm {0,1},
-    centertakeoff {2,3};
+  frc::DoubleSolenoid centergriparm {4,5},
+    centertakeoff {6,7};
 
   frc::DigitalInput limitpogo{4};
   frc::AnalogInput linesensor{0};
@@ -64,6 +64,7 @@ class Robot : public frc::TimedRobot {
   int endgamephase {0};//phase 0 not endgame, phase 1 climb/start endgame,phase 2 stop main wheels, phase 3 bring up pogostick, phase 4 move onto plateform, phase 5 stop
   
  public:
+  void Autocenterbay();
   void endgameinit();
   void endgameperiodic();
   void armcontrol();
@@ -85,6 +86,7 @@ class Robot : public frc::TimedRobot {
   std::string m_autoSelected;
   ::AHRS navx {::SPI::kMXP};
   constexpr static double farbackarm=degreetick(200), farfrontarm=degreetick(-20), startingposition=0,
-  endgame=degreetick(65), shootlow=degreetick(0), shoothigh=degreetick(60);
+  endgame=degreetick(65), shootlow=degreetick(0), shoothigh=degreetick(60), vertical=degreetick(90);
+  //add extra angles
   frc::Timer time;
 };

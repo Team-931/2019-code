@@ -39,8 +39,8 @@ return ahrsnavx.GetPitch();//it could be GetRoll instead
 void Robot::endgameperiodic(){//wheels, fangs, wheel fangs,  
  if (endgamephase==1){
      fangs.Set(1);
-     centerfang.Set(1);
-     left.Set(1);//reverse if needed, left wheels are what the power take off is conected to
+     //centerfang.Set(1);
+     //left.Set(1);//reverse if needed, left wheels are what the power take off is conected to
      right.StopMotor();
  if (limitpogo.Get())//sync fangs and pogosticks
    {endgamephase=2;

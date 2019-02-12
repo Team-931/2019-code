@@ -118,7 +118,28 @@ void Robot::armcontrol(){
     gripers.Set(-operatorstick.GetRawAxis(3));
 }
 void Robot::armdegree(){
-arms.Set (operatorstick.GetRawAxis(0));//TO DO reverse if nessicary
+double armX=operatorstick.GetRawAxis(0);
+if (std::abs(armX>.1)){
+  anglearm.Disable();
+  arms.Set (armX);//TO DO reverse if nessicary
+}
+else {
+  if (!anglearm.IsEnabled()){
+    anglearm.SetSetpoint(armEncoder.PIDGet());
+    anglearm.Enable();
+  }
+  if (operatorstick.GetRawButton(9))//TO DO change buttons
+    anglearm.SetSetpoint(farbackarm);//Add the angles
+  if (operatorstick.GetRawButton(10))
+    anglearm.SetSetpoint(farfrontarm);
+  if (operatorstick.GetRawButton(11))
+    anglearm.SetSetpoint(startingposition);
+  if (operatorstick.GetRawButton(12))
+    anglearm.SetSetpoint(shoothigh);
+  if (operatorstick.GetRawButton(13))
+    anglearm.SetSetpoint(shootlow);
+  
+}
 }
 
 
