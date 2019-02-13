@@ -27,8 +27,8 @@ class Robot : public frc::TimedRobot {
   frc::SpeedControllerGroup left {leftfront,leftback};
   frc::DifferentialDrive driver {left,right};//TO DO check weather left or right needs to be inverted
 
-  ::WPI_TalonSRX rightarm{5};
-  ::WPI_TalonSRX leftarm{6};
+  ::WPI_TalonSRX rightarm{5};//top
+  ::WPI_TalonSRX leftarm{6};//bottom
   ::WPI_TalonSRX rightgripW{7};//W=wheel
   ::WPI_TalonSRX leftgripW{8};
   frc::SpeedControllerGroup gripers {rightgripW,leftgripW};
@@ -43,8 +43,8 @@ class Robot : public frc::TimedRobot {
     centertakeoff {6,7};
 
   frc::DigitalInput limitpogo{4};
-  frc::AnalogInput linesensor{0};
-  frc::AnalogInput linesensor2{1};
+  frc::AnalogInput leftsensor{0};
+  frc::AnalogInput rightsensor{1};
   static inline bool usethresshold (frc::AnalogInput const&line)
   {return line.GetVoltage()>2;}
 

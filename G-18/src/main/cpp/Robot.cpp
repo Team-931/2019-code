@@ -80,7 +80,7 @@ void Robot::TeleopPeriodic() {
   if (endgamephase==0){
   robotcontrol();
   armcontrol();
-  if (driverstick.GetRawButton(6)&&driverstick.GetRawButton(8)){
+  if (operatorstick.GetRawButton(6)&&driverstick.GetRawButton(8)){
     endgameinit();
   }
  }
@@ -94,11 +94,23 @@ void Robot::robotcontrol() {
   arcadedrive=true;
   else if (driverstick.GetRawButton(10))
   arcadedrive=false;
-  if (arcadedrive) 
-    driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (0));//TO DO revers
-  else 
-    driver.TankDrive (-driverstick.GetRawAxis (1),-driverstick.GetRawAxis (3)); 
-  
+  if (!driverstick.GetRawButton(1))
+    if (arcadedrive) 
+      driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (0));//TO DO reverse
+    else 
+      driver.TankDrive (-driverstick.GetRawAxis (1),-driverstick.GetRawAxis (3)); 
+    else
+    if (usethresshold(rightsensor)) 
+     if (usethresshold(leftsensor))
+      driver.TankDrive(.3,.3,false);
+     else 
+      driver.TankDrive(.3,.1,false);
+    else
+     if (usethresshold(leftsensor))
+      driver.TankDrive(.1,.3,false);
+    else 
+      driver.TankDrive(0,0,false);
+
 }
 void Robot::armcontrol(){
   armdegree();
