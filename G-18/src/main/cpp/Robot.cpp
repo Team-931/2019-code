@@ -29,6 +29,7 @@ void Robot::RobotInit() {
   leftfangw.SetInverted(true);
   anglearm.SetInputRange(farbackarm,farfrontarm);
   armEncoder.SetIndexSource(8);
+  equalup.SetSafetyEnabled(false);
 }
 
 /**
@@ -75,12 +76,12 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {}
-
+//invert fangs completly
 void Robot::TeleopPeriodic() {
   if (endgamephase==0){
   robotcontrol();
   armcontrol();
-  if (operatorstick.GetRawButton(6)&&driverstick.GetRawButton(8)){
+  if (operatorstick.GetRawButton(6)&&operatorstick.GetRawButton(5)){
     endgameinit();
   }
  }
@@ -115,11 +116,11 @@ void Robot::robotcontrol() {
 void Robot::armcontrol(){
   armdegree();
   if (operatorstick.GetRawButton(7)){
-    centergriparm.Set(DoubleSolenoid::kForward);
+    centergriparm.Set(DoubleSolenoid::kReverse);
     cargoarm=false;//TO DO reverse if needed
   }
   else 
-    centergriparm.Set(DoubleSolenoid::kReverse);
+    centergriparm.Set(DoubleSolenoid::kForward);
   
   if (operatorstick.GetRawButton(8)){
     cargoarm=true;
@@ -131,7 +132,7 @@ void Robot::armcontrol(){
 }
 void Robot::armdegree(){
 double armX=operatorstick.GetRawAxis(0);
-if (std::abs(armX>.1)){
+if (std::abs(armX)>.1){
   anglearm.Disable();
   arms.Set (armX);//TO DO reverse if nessicary
 }
