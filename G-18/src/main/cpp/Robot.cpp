@@ -145,7 +145,7 @@ void Robot::armdegree(){
 double armX=operatorstick.GetRawAxis(0);
 if (std::abs(armX)>.1){
   anglearm.Disable();
-  arms.Set (armX);//TO DO reverse if nessicary
+  arms.Set (armX*.2);//TO DO reverse if nessicary
 }
 else {
   if (!anglearm.IsEnabled()){

@@ -1,4 +1,4 @@
-#include "Robot.h"
+#include "Robot.h"//face down increases, face up decreases, the Roll
 
 class LiftController:public frc::PIDController,frc::PIDSource{
 frc::DifferentialDrive& difdrive;
@@ -27,13 +27,13 @@ LiftController::LiftController(frc::DifferentialDrive& difdrive_,::AHRS& ahrsnav
 difdrive(difdrive_), ahrsnavx(ahrsnavx_){
 SetInputRange(-180,180);
 SetContinuous(true);
-SetSetpoint(10);//how many degrees do we need when going up//check number
+SetSetpoint(-6);//how many degrees do we need when going up//check number//-6 means 6 degrees facing up
 }
 void LiftController::PIDWrite(double pidoutput){
 difdrive.ArcadeDrive(1,pidoutput,false);//is the turn on the arcadedrive clockwise or conterclockwise
 }
 double LiftController::PIDGet(){//might need to make this oppsite
-return ahrsnavx.GetPitch();//it could be GetRoll instead
+return ahrsnavx.GetRoll();//it could be GetRoll instead
 }
 
 void Robot::endgameperiodic(){//wheels, fangs, wheel fangs,  
