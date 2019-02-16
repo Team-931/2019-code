@@ -16,7 +16,7 @@ void Robot::RobotInit() {
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   //rightarm.ConfigSelectedFeedbackSensor (CTRE_MagEncoder_Absolute);//TO DO invert encoders and motors as necessary
-  cs::UsbCamera cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
+  //cs::UsbCamera cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
   rightgripW.SetInverted(true);
   leftarm.SetNeutralMode(Brake);
   rightarm.SetNeutralMode(Brake);
@@ -25,10 +25,13 @@ void Robot::RobotInit() {
   rightfangw.SetNeutralMode(Brake);
   leftfangw.SetNeutralMode(Brake);
   centerfang.SetNeutralMode(Brake);
+  centerfang.SetInverted(true);
   left.SetInverted(true);
-  leftfangw.SetInverted(true);
+  right.SetInverted(true);
+  rightfangw.SetInverted(true);
   anglearm.SetInputRange(farbackarm,farfrontarm);
   armEncoder.SetIndexSource(8);
+  equalup.SetSafetyEnabled(false);
 }
 
 /**
@@ -77,9 +80,18 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
+  frc::SmartDashboard::PutNumber ("Left encoder", leftEncoder.Get());
+  frc::SmartDashboard::PutNumber ("Right encoder", rightEncoder.Get());
+  frc::SmartDashboard::PutNumber ("Pitch", navx.GetPitch());
+  frc::SmartDashboard::PutNumber ("Roll", navx.GetRoll());
   if (endgamephase==0){
   robotcontrol();
   armcontrol();
+  //Testing fangs:
+  if (operatorstick.GetRawButton(2)) fangs.Set (1);
+  else fangs.Set(0);
+  if (operatorstick.GetRawButton(1)) centerfang.Set(1);
+  else centerfang.Set(0);
   if (operatorstick.GetRawButton(6)&&driverstick.GetRawButton(8)){
     endgameinit();
   }
@@ -99,7 +111,7 @@ void Robot::robotcontrol() {
       driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (0));//TO DO reverse
     else 
       driver.TankDrive (-driverstick.GetRawAxis (1),-driverstick.GetRawAxis (3)); 
-    else
+     else
     if (usethresshold(rightsensor)) 
      if (usethresshold(leftsensor))
       driver.TankDrive(.3,.3,false);
@@ -115,23 +127,23 @@ void Robot::robotcontrol() {
 void Robot::armcontrol(){
   armdegree();
   if (operatorstick.GetRawButton(7)){
-    centergriparm.Set(DoubleSolenoid::kForward);
+    centergriparm.Set(DoubleSolenoid::kReverse);
     cargoarm=false;//TO DO reverse if needed
   }
   else 
-    centergriparm.Set(DoubleSolenoid::kReverse);
+    centergriparm.Set(DoubleSolenoid::kForward);
   
   if (operatorstick.GetRawButton(8)){
     cargoarm=true;
   }
   if (cargoarm)
-    gripers.Set(operatorstick.GetRawAxis(3));//To Do reverse if needed, and check speed
+    gripers.Set(-operatorstick.GetRawAxis(3));//To Do reverse if needed, and check speed
   else
-    gripers.Set(-operatorstick.GetRawAxis(3));
+    gripers.Set(operatorstick.GetRawAxis(3));
 }
 void Robot::armdegree(){
 double armX=operatorstick.GetRawAxis(0);
-if (std::abs(armX>.1)){
+if (std::abs(armX)>.1){
   anglearm.Disable();
   arms.Set (armX);//TO DO reverse if nessicary
 }
