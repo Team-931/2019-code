@@ -17,6 +17,10 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   //rightarm.ConfigSelectedFeedbackSensor (CTRE_MagEncoder_Absolute);//TO DO invert encoders and motors as necessary
   //cs::UsbCamera cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
+  rightfront.SetNeutralMode(Coast);
+  leftfront.SetNeutralMode(Coast);
+  rightback.SetNeutralMode(Coast);
+  leftback.SetNeutralMode(Coast);
   rightgripW.SetInverted(true);
   leftarm.SetNeutralMode(Brake);
   rightarm.SetNeutralMode(Brake);
