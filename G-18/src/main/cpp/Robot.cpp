@@ -78,7 +78,7 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {}
-
+//invert fangs completly
 void Robot::TeleopPeriodic() {
   frc::SmartDashboard::PutNumber ("Left encoder", leftEncoder.Get());
   frc::SmartDashboard::PutNumber ("Right encoder", rightEncoder.Get());
@@ -87,12 +87,16 @@ void Robot::TeleopPeriodic() {
   if (endgamephase==0){
   robotcontrol();
   armcontrol();
+<<<<<<< HEAD
   //Testing fangs:
   if (operatorstick.GetRawButton(2)) fangs.Set (1);
   else fangs.Set(0);
   if (operatorstick.GetRawButton(1)) centerfang.Set(1);
   else centerfang.Set(0);
   if (operatorstick.GetRawButton(6)&&driverstick.GetRawButton(8)){
+=======
+  if (operatorstick.GetRawButton(6)&&operatorstick.GetRawButton(5)){
+>>>>>>> 04b1eedd840c179481d9dd8973da3e54fd71536e
     endgameinit();
   }
  }

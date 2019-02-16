@@ -48,8 +48,8 @@ class Robot : public frc::TimedRobot {
   static inline bool usethresshold (frc::AnalogInput const&line)
   {return line.GetVoltage()>2;}
 
-  frc::Encoder leftEncoder{0,1};//,true}; //TO DO check if right on to reverse
-  frc::Encoder rightEncoder{2,3};
+  frc::Encoder leftEncoder{0,1};//2048 ticks per rotation 6in*3.14 per rotation
+  frc::Encoder rightEncoder{2,3,true};
   frc::Encoder armEncoder{6,7};
 
 //stating user interface items
