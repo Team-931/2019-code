@@ -15,6 +15,8 @@ void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+
+  frc::SmartDashboard::SetDefaultNumber ("Arm P coeff", armP);//to change and read in later
   //rightarm.ConfigSelectedFeedbackSensor (CTRE_MagEncoder_Absolute);//TO DO invert encoders and motors as necessary
   //cs::UsbCamera cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
   rightfront.SetNeutralMode(Coast);
@@ -29,7 +31,7 @@ void Robot::RobotInit() {
   rightfangw.SetNeutralMode(Brake);
   leftfangw.SetNeutralMode(Brake);
   centerfang.SetNeutralMode(Brake);
-  centerfang.SetInverted(true);
+  centerfang.SetInverted(false);
   left.SetInverted(true);
   right.SetInverted(true);
   rightfangw.SetInverted(true);
@@ -46,7 +48,16 @@ void Robot::RobotInit() {
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic() {
+  frc::SmartDashboard::PutNumber ("Left encoder", leftEncoder.Get());
+  frc::SmartDashboard::PutNumber ("Right encoder", rightEncoder.Get());
+  frc::SmartDashboard::PutNumber ("Pitch", navx.GetPitch());
+  frc::SmartDashboard::PutNumber ("Roll", navx.GetRoll());
+  frc::SmartDashboard::PutNumber ("Arm encoder", armEncoder.Get());
+  frc::SmartDashboard::PutBoolean ("Pogo Limit", limitpogo.Get());
+  frc::SmartDashboard::PutBoolean ("Left linefollow", usethresshold(leftsensor));
+  frc::SmartDashboard::PutBoolean ("Right linefollow", usethresshold(rightsensor));
+}
 
 /**
  * This autonomous (along with the chooser code above) shows how to select
@@ -60,6 +71,10 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
+  
+  armP = frc::SmartDashboard::GetNumber("Arm P coeff", armP);
+  anglearm.SetP(armP);
+
   centertakeoff.Set(DoubleSolenoid::kForward);
   m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
@@ -81,13 +96,12 @@ void Robot::AutonomousPeriodic() {
   }
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
+  armP = frc::SmartDashboard::GetNumber("Arm P coeff", armP);
+  anglearm.SetP(armP);
+}
 //invert fangs completly
 void Robot::TeleopPeriodic() {
-  frc::SmartDashboard::PutNumber ("Left encoder", leftEncoder.Get());
-  frc::SmartDashboard::PutNumber ("Right encoder", rightEncoder.Get());
-  frc::SmartDashboard::PutNumber ("Pitch", navx.GetPitch());
-  frc::SmartDashboard::PutNumber ("Roll", navx.GetRoll());
   if (endgamephase==0){
   robotcontrol();
   armcontrol();
@@ -163,9 +177,9 @@ else {
   if (operatorstick.GetRawButton(11))
     anglearm.SetSetpoint(startingposition);
   if (operatorstick.GetRawButton(12))
-    anglearm.SetSetpoint(shoothigh);
+    anglearm.SetSetpoint(shootrocket);
   if (operatorstick.GetRawButton(13))
-    anglearm.SetSetpoint(shootlow);
+    anglearm.SetSetpoint(shootbay);
   
 }
 }

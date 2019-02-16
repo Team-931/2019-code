@@ -49,8 +49,8 @@ class Robot : public frc::TimedRobot {
   {return line.GetVoltage()>2;}
 
   frc::Encoder leftEncoder{0,1};//2048 ticks per rotation 6in*3.14 per rotation
-  frc::Encoder rightEncoder{2,3,true};
-  frc::Encoder armEncoder{6,7};
+  frc::Encoder rightEncoder{2,3,true}; //reverse
+  frc::Encoder armEncoder{6,7, true};  //reverse
 
 //stating user interface items
   frc::Joystick driverstick{0};
@@ -79,14 +79,16 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
  private:
-  frc::PIDController anglearm{.1,0,0,&armEncoder,&arms};
+  double armP = .05;
+  frc::PIDController anglearm{armP,0,0,&armEncoder,&arms};
   frc::SendableChooser<std::string> m_chooser;
   const std::string kAutoNameDefault = "Default";
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
   ::AHRS navx {::SPI::kMXP};
-  constexpr static double farbackarm=degreetick(200), farfrontarm=degreetick(-20), startingposition=0,
-  endgame=degreetick(65), shootlow=degreetick(0), shoothigh=degreetick(60), vertical=degreetick(90);
+  constexpr static double farbackarm=(-74), farfrontarm=(73), startingposition=0,
+  endgame=(19), shootrocket=(-46), shootbay=(-36), vertical=(0), hatch=(-56),
+  fronthatch=(59), frontrocket=(44), frontbay=(36);
   //add extra angles
   frc::Timer time;
 };

@@ -13,6 +13,7 @@ void Robot::endgameinit(){//solinoid, PID, arm
  endgamephase=1;
  anglearm.SetSetpoint(endgame);
  anglearm.Enable();
+ driver.SetSafetyEnabled(false);
  centertakeoff.Set(DoubleSolenoid::kReverse);
  leftfront.SetNeutralMode(Brake);
  leftback.SetNeutralMode(Brake);
