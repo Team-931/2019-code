@@ -18,11 +18,13 @@ void Robot::RobotInit() {
 
   frc::SmartDashboard::SetDefaultNumber ("Arm P coeff", armP);//to change and read in later
   //rightarm.ConfigSelectedFeedbackSensor (CTRE_MagEncoder_Absolute);//TO DO invert encoders and motors as necessary
+  
+  outputCam.SetSource(frontCam);
   //cs::UsbCamera cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
-  rightfront.SetNeutralMode(Coast);
-  leftfront.SetNeutralMode(Coast);
-  rightback.SetNeutralMode(Coast);
-  leftback.SetNeutralMode(Coast);
+  rightfront.SetNeutralMode(Brake);
+  leftfront.SetNeutralMode(Brake);
+  rightback.SetNeutralMode(Brake);
+  leftback.SetNeutralMode(Brake);
   rightgripW.SetInverted(true);
   leftarm.SetNeutralMode(Brake);
   rightarm.SetNeutralMode(Brake);
@@ -49,6 +51,10 @@ void Robot::RobotInit() {
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
+  if(driverstick.GetRawButtonPressed(5)) 
+    if (outputCam.GetSource() == frontCam) outputCam.SetSource(rearCam);
+    else outputCam.SetSource(frontCam);
+
   frc::SmartDashboard::PutNumber ("Left encoder", leftEncoder.Get());
   frc::SmartDashboard::PutNumber ("Right encoder", rightEncoder.Get());
   frc::SmartDashboard::PutNumber ("Pitch", navx.GetPitch());
@@ -120,9 +126,9 @@ void Robot::TestPeriodic() {}
 
 void Robot::robotcontrol() {
   fangs.Set (driverstick.GetRawButton(3)) ;
-  if (driverstick.GetRawButton(9))
+  if (driverstick.GetRawButtonPressed(9))
   arcadedrive=true;
-  else if (driverstick.GetRawButton(10))
+  else if (driverstick.GetRawButtonPressed(10))
   arcadedrive=false;
   if (!driverstick.GetRawButton(1))
     if (arcadedrive) 
@@ -144,17 +150,18 @@ void Robot::robotcontrol() {
 }
 void Robot::armcontrol(){
   armdegree();
-  if (operatorstick.GetRawButton(3)){
-    centergriparm.Set(DoubleSolenoid::kReverse);
-    gripers.Set(-1);
+  if (operatorstick.GetRawButtonPressed(3)){
+    centergriparm.Set(DoubleSolenoid::kReverse);//lost front wheels so just having open and close
+    //gripers.Set(-1);
     //cargoarm=false;//TO DO reverse if needed
   }
   else{ 
-    centergriparm.Set(DoubleSolenoid::kForward);
+    //centergriparm.Set(DoubleSolenoid::kForward);
 
   
-  if (operatorstick.GetRawButton(4)){
-    gripers.Set(1);
+  if (operatorstick.GetRawButtonPressed(4)){
+    centergriparm.Set(DoubleSolenoid::kForward);
+    //gripers.Set(1);
     //cargoarm=true;
   }
   else{

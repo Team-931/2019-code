@@ -21,7 +21,7 @@ void Robot::endgameinit(){//solinoid, PID, arm
  rightfront.SetNeutralMode(Coast);
  rightback.SetNeutralMode(Coast);
  liftcontroller=new LiftController(equalup,navx);
- liftcontroller->Enable();
+ //liftcontroller->Enable();
 }
 
 LiftController::LiftController(frc::DifferentialDrive& difdrive_,::AHRS& ahrsnavx_)
@@ -30,7 +30,7 @@ difdrive(difdrive_), ahrsnavx(ahrsnavx_),
 speed (1) {
 SetInputRange(-180,180);
 SetContinuous(true);
-SetSetpoint(-4);//how many degrees do we need when going up//check number//-6 means 6 degrees facing up
+SetSetpoint(-3);//how many degrees do we need when going up//check number//-6 means 6 degrees facing up
 }
 void LiftController::PIDWrite(double pidoutput){
 difdrive.ArcadeDrive(speed,pidoutput,false);//is the turn on the arcadedrive clockwise or conterclockwise
@@ -42,8 +42,8 @@ static constexpr double phase2speed = .25;
 void Robot::endgameperiodic(){//wheels, fangs, wheel fangs,  
  if (endgamephase==1){
      fangs.Set(1);
-     //centerfang.Set(1);
-     //left.Set(1);//reverse if needed, left wheels are what the power take off is conected to
+     centerfang.Set(-1);
+     left.Set(1);//reverse if needed, left wheels are what the power take off is conected to
      right.StopMotor();
  if (limitpogo.Get())//sync fangs and pogosticks
    {endgamephase=2;
@@ -56,11 +56,13 @@ void Robot::endgameperiodic(){//wheels, fangs, wheel fangs,
  }
  if (endgamephase==2){
     fangs.Set(1);
+     centerfang.Set(-phase2speed);
+     left.Set(phase2speed);
 /*     centerfang.StopMotor();
     driver.StopMotor();
  */ 
     //right.Set(phase2speed);
-    if (time.Get()>7)//TO DO change time
+    if (time.Get()>6.5)//TO DO change time
   {endgamephase=3;
   liftcontroller->Disable();
   centertakeoff.Set(DoubleSolenoid::kForward);}
@@ -68,15 +70,20 @@ void Robot::endgameperiodic(){//wheels, fangs, wheel fangs,
  }
  if (endgamephase==3){
      fangs.Set(1);
- /* if (limitpogo.Get())
-    driver.StopMotor();
- else
-  */   driver.ArcadeDrive(phase2speed,0);
- if (time.Get()>12)//TO DO change time
+     centerfang.Set(-1);
+ if (time.Get()>8)//TO DO change time
    endgamephase=4;
    return;
  }
- if (endgamephase==4)
+ if (endgamephase==4){
+   centerfang.Set(0);
+    driver.ArcadeDrive(phase2speed,0);
+  fangs.Set(1); //or 0
+ if (time.Get()>12)//TO DO change time
+   endgamephase=5;
+   return;
+ }
+ if (endgamephase==5)
    fangs.StopMotor();
    driver.StopMotor();
 }

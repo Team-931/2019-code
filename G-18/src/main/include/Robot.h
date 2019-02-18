@@ -19,6 +19,9 @@ static constexpr double degreetick (double degreeangle){
   }
   
 class Robot : public frc::TimedRobot {
+  cs::UsbCamera frontCam{"Front Cam", 0}, rearCam{"Rear Cam", 1};
+  cs::MjpegServer outputCam {frc::CameraServer::GetInstance()->AddSwitchedCamera("Output Cam")};
+
   ::WPI_TalonSRX rightfront{1};
   ::WPI_TalonSRX rightback{2};
   frc::SpeedControllerGroup right {rightfront,rightback};
