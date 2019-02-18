@@ -85,6 +85,9 @@ void Robot::AutonomousInit() {
     // Custom Auto goes here
   } else {
     // Default Auto goes here
+    anglearm.SetSetpoint(endgame);
+    anglearm.Enable();
+    driver.StopMotor();
   }
 }
 
@@ -99,18 +102,14 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {
   armP = frc::SmartDashboard::GetNumber("Arm P coeff", armP);
   anglearm.SetP(armP);
+  endgamephase = 0;
 }
 //invert fangs completly
 void Robot::TeleopPeriodic() {
   if (endgamephase==0){
   robotcontrol();
   armcontrol();
-  //Testing fangs:
-  if (operatorstick.GetRawButton(2)) fangs.Set (1);
-  else fangs.Set(0);
-  if (operatorstick.GetRawButton(1)) centerfang.Set(1);
-  else centerfang.Set(0);
-  if (operatorstick.GetRawButton(6)&&driverstick.GetRawButton(8)){
+  if (operatorstick.GetRawButton(1)&&operatorstick.GetRawButton(2)){
     endgameinit();
   }
  }
@@ -120,6 +119,7 @@ void Robot::TeleopPeriodic() {
 void Robot::TestPeriodic() {}
 
 void Robot::robotcontrol() {
+  fangs.Set (driverstick.GetRawButton(3)) ;
   if (driverstick.GetRawButton(9))
   arcadedrive=true;
   else if (driverstick.GetRawButton(10))
@@ -144,42 +144,55 @@ void Robot::robotcontrol() {
 }
 void Robot::armcontrol(){
   armdegree();
-  if (operatorstick.GetRawButton(7)){
+  if (operatorstick.GetRawButton(3)){
     centergriparm.Set(DoubleSolenoid::kReverse);
-    cargoarm=false;//TO DO reverse if needed
+    gripers.Set(-1);
+    //cargoarm=false;//TO DO reverse if needed
   }
-  else 
+  else{ 
     centergriparm.Set(DoubleSolenoid::kForward);
+
   
-  if (operatorstick.GetRawButton(8)){
-    cargoarm=true;
+  if (operatorstick.GetRawButton(4)){
+    gripers.Set(1);
+    //cargoarm=true;
   }
-  if (cargoarm)
-    gripers.Set(-operatorstick.GetRawAxis(3));//To Do reverse if needed, and check speed
-  else
-    gripers.Set(operatorstick.GetRawAxis(3));
+  else{
+    double speedgrip=operatorstick.GetRawAxis(0);
+    if (speedgrip<0) 
+     speedgrip*=.75;//setting speed for the griper wheels
+
+    gripers.Set(-speedgrip);//To Do reverse if needed, and check speed
+   }
+  }
 }
 void Robot::armdegree(){
-double armX=operatorstick.GetRawAxis(0);
+double armX=operatorstick.GetRawAxis(1);
 if (std::abs(armX)>.1){
   anglearm.Disable();
-  arms.Set (armX*.2);//TO DO reverse if nessicary
+  arms.Set (-armX*.2);//TO DO reverse if nessicary
 }
 else {
   if (!anglearm.IsEnabled()){
     anglearm.SetSetpoint(armEncoder.PIDGet());
     anglearm.Enable();
   }
-  if (operatorstick.GetRawButton(9))//TO DO change buttons
+  if (operatorstick.GetRawButton(5))//TO DO change buttons
     anglearm.SetSetpoint(farbackarm);//Add the angles
-  if (operatorstick.GetRawButton(10))
+  if (operatorstick.GetRawButton(12))
     anglearm.SetSetpoint(farfrontarm);
   if (operatorstick.GetRawButton(11))
-    anglearm.SetSetpoint(startingposition);
-  if (operatorstick.GetRawButton(12))
-    anglearm.SetSetpoint(shootrocket);
-  if (operatorstick.GetRawButton(13))
+    anglearm.SetSetpoint(fronthatch);
+  if (operatorstick.GetRawButton(6))
+    anglearm.SetSetpoint(hatch);
+  if (operatorstick.GetRawButton(9))
+    anglearm.SetSetpoint(frontbay);
+  if (operatorstick.GetRawButton(8))
     anglearm.SetSetpoint(shootbay);
+  if (operatorstick.GetRawButton(7))
+    anglearm.SetSetpoint(shootrocket);
+  if (operatorstick.GetRawButton(10))
+    anglearm.SetSetpoint(frontrocket);
   
 }
 }

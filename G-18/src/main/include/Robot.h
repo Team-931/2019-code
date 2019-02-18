@@ -59,7 +59,7 @@ class Robot : public frc::TimedRobot {
 
   bool arcadedrive {true};
 
-  bool  cargoarm {true};
+  //bool  cargoarm {true};
 
   int endgamephase {0};//phase 0 not endgame, phase 1 climb/start endgame,phase 2 stop main wheels, phase 3 bring up pogostick, phase 4 move onto plateform, phase 5 stop
   
@@ -87,8 +87,8 @@ class Robot : public frc::TimedRobot {
   std::string m_autoSelected;
   ::AHRS navx {::SPI::kMXP};
   constexpr static double farbackarm=(-74), farfrontarm=(73), startingposition=0,
-  endgame=(19), shootrocket=(-46), shootbay=(-36), vertical=(0), hatch=(-56),
-  fronthatch=(59), frontrocket=(44), frontbay=(36);
+  endgame=(19), shootrocket=(-46), shootbay=(-36), vertical=(0), hatch=(-53),
+  fronthatch=(53), frontrocket=(44), frontbay=(31);
   //add extra angles
   frc::Timer time;
 };

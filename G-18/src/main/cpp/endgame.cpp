@@ -6,7 +6,8 @@ frc::DifferentialDrive& difdrive;
 public:
 LiftController(frc::DifferentialDrive&,::AHRS&);
 virtual void PIDWrite(double pidoutput);
-virtual double PIDGet();}
+virtual double PIDGet();
+double speed;}
 *liftcontroller=0;
 
 void Robot::endgameinit(){//solinoid, PID, arm
@@ -25,18 +26,19 @@ void Robot::endgameinit(){//solinoid, PID, arm
 
 LiftController::LiftController(frc::DifferentialDrive& difdrive_,::AHRS& ahrsnavx_)
 :PIDController(.1,0,0,this,this),
-difdrive(difdrive_), ahrsnavx(ahrsnavx_){
+difdrive(difdrive_), ahrsnavx(ahrsnavx_),
+speed (1) {
 SetInputRange(-180,180);
 SetContinuous(true);
-SetSetpoint(-6);//how many degrees do we need when going up//check number//-6 means 6 degrees facing up
+SetSetpoint(-4);//how many degrees do we need when going up//check number//-6 means 6 degrees facing up
 }
 void LiftController::PIDWrite(double pidoutput){
-difdrive.ArcadeDrive(1,pidoutput,false);//is the turn on the arcadedrive clockwise or conterclockwise
+difdrive.ArcadeDrive(speed,pidoutput,false);//is the turn on the arcadedrive clockwise or conterclockwise
 }
 double LiftController::PIDGet(){//might need to make this oppsite
 return ahrsnavx.GetRoll();//it could be GetRoll instead
 }
-
+static constexpr double phase2speed = .25;
 void Robot::endgameperiodic(){//wheels, fangs, wheel fangs,  
  if (endgamephase==1){
      fangs.Set(1);
@@ -45,27 +47,32 @@ void Robot::endgameperiodic(){//wheels, fangs, wheel fangs,
      right.StopMotor();
  if (limitpogo.Get())//sync fangs and pogosticks
    {endgamephase=2;
-   liftcontroller->Disable();
+ //  liftcontroller->Disable();
+   liftcontroller->speed = phase2speed;
+   //liftcontroller->SetSetpoint(2);//nose down
    time.Reset();
    time.Start();} 
     return;
  }
  if (endgamephase==2){
     fangs.Set(1);
-    centerfang.StopMotor();
+/*     centerfang.StopMotor();
     driver.StopMotor();
- if (time.Get()>5)//TO DO change time
+ */ 
+    //right.Set(phase2speed);
+    if (time.Get()>7)//TO DO change time
   {endgamephase=3;
+  liftcontroller->Disable();
   centertakeoff.Set(DoubleSolenoid::kForward);}
   return;
  }
  if (endgamephase==3){
      fangs.Set(1);
- if (limitpogo.Get())
+ /* if (limitpogo.Get())
     driver.StopMotor();
  else
-    driver.ArcadeDrive(1,0);
- if (time.Get()>10)//TO DO change time
+  */   driver.ArcadeDrive(phase2speed,0);
+ if (time.Get()>12)//TO DO change time
    endgamephase=4;
    return;
  }
