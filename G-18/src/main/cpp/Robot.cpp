@@ -13,7 +13,7 @@
 
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
+  m_chooser.AddOption(autoForward, autoForward);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
   frc::SmartDashboard::SetDefaultNumber ("Arm P coeff", armP);//to change and read in later
@@ -23,20 +23,20 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutBoolean("Rear view", false);
   //cs::UsbCamera cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
   rightfront.SetNeutralMode(Brake);
-  rightfront.ConfigVoltageCompSaturation(11.5);
-  rightfront.EnableVoltageCompensation(true);
+  rightfront.ConfigVoltageCompSaturation(12);
+//  rightfront.EnableVoltageCompensation(true);
 
   leftfront.SetNeutralMode(Brake);
-  leftfront.ConfigVoltageCompSaturation(11.5);
-  leftfront.EnableVoltageCompensation(true);
+  leftfront.ConfigVoltageCompSaturation(12);
+//  leftfront.EnableVoltageCompensation(true);
 
   rightback.SetNeutralMode(Brake);
-  rightback.ConfigVoltageCompSaturation(11.5);
-  rightback.EnableVoltageCompensation(true);
+  rightback.ConfigVoltageCompSaturation(12);
+//  rightback.EnableVoltageCompensation(true);
 
   leftback.SetNeutralMode(Brake);
-  leftback.ConfigVoltageCompSaturation(11.5);
-  leftback.EnableVoltageCompensation(true);
+  leftback.ConfigVoltageCompSaturation(12);
+//  leftback.EnableVoltageCompensation(true);
 
   rightgripW.SetInverted(true);
   leftarm.SetNeutralMode(Brake);
@@ -47,10 +47,10 @@ void Robot::RobotInit() {
   leftfangw.SetNeutralMode(Brake);
 
   centerfang.SetNeutralMode(Brake);
-  centerfang.ConfigVoltageCompSaturation(11.5);
+//  centerfang.ConfigVoltageCompSaturation(12);
   centerfang.EnableVoltageCompensation(true);
   centerfang.SetInverted(false);
-  
+
   left.SetInverted(true);
   right.SetInverted(true);
   rightfangw.SetInverted(true);
@@ -80,8 +80,8 @@ void Robot::RobotPeriodic() {
 
   frc::SmartDashboard::PutNumber ("Left encoder", leftEncoder.Get());
   frc::SmartDashboard::PutNumber ("Right encoder", rightEncoder.Get());
-  frc::SmartDashboard::PutNumber ("Yaw", navx.GetYaw());
-  frc::SmartDashboard::PutNumber ("Roll", navx.GetRoll());
+  frc::SmartDashboard::PutNumber ("Yaw", (int) navx.GetYaw());
+  frc::SmartDashboard::PutNumber ("Roll", (int) navx.GetRoll());
   frc::SmartDashboard::PutNumber ("Arm encoder", armEncoder.Get());
   frc::SmartDashboard::PutBoolean ("Pogo Limit", limitpogo.Get());
   frc::SmartDashboard::PutBoolean("Fang Limit", limitfang.Get());
@@ -110,20 +110,28 @@ void Robot::AutonomousInit() {
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
+  anglearm.SetSetpoint(endgame);
+  anglearm.Enable();
+// Up here applies to all Autos
 
-  if (m_autoSelected == kAutoNameCustom) {
+  if (m_autoSelected == autoForward) {
     // Custom Auto goes here
+    time.Reset();
+    time.Start();
   } else {
     // Default Auto goes here
-    anglearm.SetSetpoint(endgame);
-    anglearm.Enable();
+
    // driver.StopMotor();
   }
 }
 
 void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
+  if (m_autoSelected == autoForward) {
+   if (time.Get()<5)
     // Custom Auto goes here
+    driver.ArcadeDrive(1,0,false);
+    else
+    driver.StopMotor();
   } else {
     // Default Auto goes here
     robotcontrol();

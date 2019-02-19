@@ -87,11 +87,11 @@ class Robot : public frc::TimedRobot {
   frc::PIDController anglearm{armP,0,0,&armEncoder,&arms};
   frc::SendableChooser<std::string> m_chooser;
   const std::string kAutoNameDefault = "Default";
-  const std::string kAutoNameCustom = "My Auto";
+  const std::string autoForward = "off platform";
   std::string m_autoSelected;
   ::AHRS navx {::SPI::kMXP};
   constexpr static double farbackarm=(-74), farfrontarm=(73), startingposition=0,
-  endgame=(19), shootrocket=(-46), shootbay=(-36), vertical=(0), hatch=(-53),
+  endgame=(19), shootrocket=(-46), shootbay=(-36), vertical=(0), hatch=(-56),
   fronthatch=(53), frontrocket=(44), frontbay=(31);
   //add extra angles
   frc::Timer time;
