@@ -20,11 +20,24 @@ void Robot::RobotInit() {
   //rightarm.ConfigSelectedFeedbackSensor (CTRE_MagEncoder_Absolute);//TO DO invert encoders and motors as necessary
   
   outputCam.SetSource(frontCam);
+  frc::SmartDashboard::PutBoolean("Rear view", false);
   //cs::UsbCamera cam = frc::CameraServer::GetInstance()->StartAutomaticCapture();
   rightfront.SetNeutralMode(Brake);
+  rightfront.ConfigVoltageCompSaturation(11.5);
+  rightfront.EnableVoltageCompensation(true);
+
   leftfront.SetNeutralMode(Brake);
+  leftfront.ConfigVoltageCompSaturation(11.5);
+  leftfront.EnableVoltageCompensation(true);
+
   rightback.SetNeutralMode(Brake);
+  rightback.ConfigVoltageCompSaturation(11.5);
+  rightback.EnableVoltageCompensation(true);
+
   leftback.SetNeutralMode(Brake);
+  leftback.ConfigVoltageCompSaturation(11.5);
+  leftback.EnableVoltageCompensation(true);
+
   rightgripW.SetInverted(true);
   leftarm.SetNeutralMode(Brake);
   rightarm.SetNeutralMode(Brake);
@@ -32,8 +45,12 @@ void Robot::RobotInit() {
   leftgripW.SetNeutralMode(Brake);
   rightfangw.SetNeutralMode(Brake);
   leftfangw.SetNeutralMode(Brake);
+
   centerfang.SetNeutralMode(Brake);
+  centerfang.ConfigVoltageCompSaturation(11.5);
+  centerfang.EnableVoltageCompensation(true);
   centerfang.SetInverted(false);
+  
   left.SetInverted(true);
   right.SetInverted(true);
   rightfangw.SetInverted(true);
@@ -52,15 +69,22 @@ void Robot::RobotInit() {
  */
 void Robot::RobotPeriodic() {
   if(driverstick.GetRawButtonPressed(5)) 
-    if (outputCam.GetSource() == frontCam) outputCam.SetSource(rearCam);
-    else outputCam.SetSource(frontCam);
+    if (outputCam.GetSource() == frontCam) {
+      outputCam.SetSource(rearCam);
+      frc::SmartDashboard::PutBoolean("Rear view", true);
+    }
+    else {
+      outputCam.SetSource(frontCam);
+      frc::SmartDashboard::PutBoolean("Rear view", false);
+    }
 
   frc::SmartDashboard::PutNumber ("Left encoder", leftEncoder.Get());
   frc::SmartDashboard::PutNumber ("Right encoder", rightEncoder.Get());
-  frc::SmartDashboard::PutNumber ("Pitch", navx.GetPitch());
+  frc::SmartDashboard::PutNumber ("Yaw", navx.GetYaw());
   frc::SmartDashboard::PutNumber ("Roll", navx.GetRoll());
   frc::SmartDashboard::PutNumber ("Arm encoder", armEncoder.Get());
   frc::SmartDashboard::PutBoolean ("Pogo Limit", limitpogo.Get());
+  frc::SmartDashboard::PutBoolean("Fang Limit", limitfang.Get());
   frc::SmartDashboard::PutBoolean ("Left linefollow", usethresshold(leftsensor));
   frc::SmartDashboard::PutBoolean ("Right linefollow", usethresshold(rightsensor));
 }
@@ -93,7 +117,7 @@ void Robot::AutonomousInit() {
     // Default Auto goes here
     anglearm.SetSetpoint(endgame);
     anglearm.Enable();
-    driver.StopMotor();
+   // driver.StopMotor();
   }
 }
 
@@ -102,6 +126,8 @@ void Robot::AutonomousPeriodic() {
     // Custom Auto goes here
   } else {
     // Default Auto goes here
+    robotcontrol();
+    armcontrol();
   }
 }
 

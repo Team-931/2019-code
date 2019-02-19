@@ -46,6 +46,7 @@ class Robot : public frc::TimedRobot {
     centertakeoff {6,7};
 
   frc::DigitalInput limitpogo{4};
+  frc::DigitalInput limitfang{5};
   frc::AnalogInput leftsensor{0};
   frc::AnalogInput rightsensor{1};
   static inline bool usethresshold (frc::AnalogInput const&line)
@@ -82,7 +83,7 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
  private:
-  double armP = .05;
+  double armP = .02;
   frc::PIDController anglearm{armP,0,0,&armEncoder,&arms};
   frc::SendableChooser<std::string> m_chooser;
   const std::string kAutoNameDefault = "Default";
