@@ -93,6 +93,9 @@ class Robot : public frc::TimedRobot {
   constexpr static double farbackarm=(-74), farfrontarm=(73), startingposition=0,
   endgame=(19), shootrocket=(-46), shootbay=(-36), vertical=(0), hatch=(-56),
   fronthatch=(53), frontrocket=(44), frontbay=(31);
+  const static double armPositions[];
+  const static int armPositionCt;// = sizeof (Robot::armPositions) / sizeof (double);
+
   //add extra angles
   frc::Timer time;
 };

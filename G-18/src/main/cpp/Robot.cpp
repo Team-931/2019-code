@@ -59,6 +59,9 @@ void Robot::RobotInit() {
   equalup.SetSafetyEnabled(false);
 }
 
+static int gripperDisplayBit = 0;
+static constexpr int armButtonBase = 4;//TODO confirm this
+
 /**
  * This function is called every robot packet, no matter the mode. Use
  * this for items like diagnostics that you want ran during disabled,
@@ -77,7 +80,21 @@ void Robot::RobotPeriodic() {
       outputCam.SetSource(frontCam);
       frc::SmartDashboard::PutBoolean("Rear view", false);
     }
-
+  {//report arm position to operator console
+    int buttonBit = 1<<(armButtonBase-1);
+    int armPos = armEncoder.Get();
+    int level = armPositions[0];
+    const int tolerance = 2;
+    for (int ix = 1; ix < armPositionCt; ++ix) {
+      if (level + tolerance >= armPos) break;
+      if ((level = armPositions[ix]) - tolerance > armPos) {
+        buttonBit *= 3;
+        break;
+      }
+      buttonBit <<= 1;
+    }
+    operatorstick.SetOutputs(buttonBit | gripperDisplayBit);
+  }
   frc::SmartDashboard::PutNumber ("Left encoder", leftEncoder.Get());
   frc::SmartDashboard::PutNumber ("Right encoder", rightEncoder.Get());
   frc::SmartDashboard::PutNumber ("Yaw", (int) navx.GetYaw());
@@ -149,7 +166,7 @@ void Robot::TeleopPeriodic() {
   if (endgamephase==0){
   robotcontrol();
   armcontrol();
-  if (operatorstick.GetRawButton(1)&&operatorstick.GetRawButton(2)){
+  if (operatorstick.GetRawButton(1)/* &&operatorstick.GetRawButton(2) */){
     endgameinit();
   }
  }
@@ -191,8 +208,9 @@ void Robot::robotcontrol() {
 }
 void Robot::armcontrol(){
   armdegree();
-  if (operatorstick.GetRawButtonPressed(3)){
+  if (operatorstick.GetRawButtonPressed(2)){
     centergriparm.Set(DoubleSolenoid::kReverse);//lost front wheels so just having open and close
+    gripperDisplayBit = 2;
     //gripers.Set(-1);
     //cargoarm=false;//TO DO reverse if needed
   }
@@ -200,8 +218,9 @@ void Robot::armcontrol(){
     //centergriparm.Set(DoubleSolenoid::kForward);
 
   
-  if (operatorstick.GetRawButtonPressed(4)){
+  if (operatorstick.GetRawButtonPressed(3)){
     centergriparm.Set(DoubleSolenoid::kForward);
+    gripperDisplayBit = 4;
     //gripers.Set(1);
     //cargoarm=true;
   }
@@ -225,6 +244,11 @@ else {
     anglearm.SetSetpoint(armEncoder.PIDGet());
     anglearm.Enable();
   }
+  
+  for (int ix = 0; ix < armPositionCt; ++ix)
+    if(operatorstick.GetRawButton(ix+armButtonBase))// 4 is the first arm setting button now
+      anglearm.SetSetpoint (armPositions[ix]);
+  /* 
   if (operatorstick.GetRawButton(5))//TO DO change buttons
     anglearm.SetSetpoint(farbackarm);//Add the angles
   if (operatorstick.GetRawButton(12))
@@ -240,7 +264,7 @@ else {
   if (operatorstick.GetRawButton(7))
     anglearm.SetSetpoint(shootrocket);
   if (operatorstick.GetRawButton(10))
-    anglearm.SetSetpoint(frontrocket);
+    anglearm.SetSetpoint(frontrocket); */
   
 }
 }
