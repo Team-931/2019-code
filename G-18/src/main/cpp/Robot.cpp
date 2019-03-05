@@ -88,9 +88,6 @@ void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutBoolean("Fang Limit", limitfang.Get());
   frc::SmartDashboard::PutBoolean ("Left linefollow", usethresshold(leftsensor));
   frc::SmartDashboard::PutBoolean ("Right linefollow", usethresshold(rightsensor));
-  for (int ix = 0; ix<11; ++ix;)
-  if (operatorstick.GetRawButtonPressed(ix + 1))
-    operatorstick.SetOutput(1<<ix);
 }
 
 /**
