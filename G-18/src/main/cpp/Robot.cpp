@@ -46,9 +46,10 @@ void Robot::RobotInit() {
   rightfangw.SetNeutralMode(Brake);
   leftfangw.SetNeutralMode(Brake);
 
-  centerfang.SetNeutralMode(Brake);
+  centerfang1.SetNeutralMode(Brake);
+  centerfang2.SetNeutralMode(Brake);
 //  centerfang.ConfigVoltageCompSaturation(12);
-  centerfang.EnableVoltageCompensation(true);
+  //centerfang.EnableVoltageCompensation(true);
   centerfang.SetInverted(false);
 
   left.SetInverted(true);
@@ -87,6 +88,9 @@ void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutBoolean("Fang Limit", limitfang.Get());
   frc::SmartDashboard::PutBoolean ("Left linefollow", usethresshold(leftsensor));
   frc::SmartDashboard::PutBoolean ("Right linefollow", usethresshold(rightsensor));
+  for (int ix = 0; ix<11; ++ix;)
+  if (operatorstick.GetRawButtonPressed(ix + 1))
+    operatorstick.SetOutput(1<<ix);
 }
 
 /**
@@ -149,7 +153,7 @@ void Robot::TeleopPeriodic() {
   if (endgamephase==0){
   robotcontrol();
   armcontrol();
-  if (operatorstick.GetRawButton(1)&&operatorstick.GetRawButton(2)){
+  if (operatorstick.GetRawButton(1)){
     endgameinit();
   }
  }
@@ -191,7 +195,7 @@ void Robot::robotcontrol() {
 }
 void Robot::armcontrol(){
   armdegree();
-  if (operatorstick.GetRawButtonPressed(3)){
+  if (operatorstick.GetRawButtonPressed(2)){
     centergriparm.Set(DoubleSolenoid::kReverse);//lost front wheels so just having open and close
     //gripers.Set(-1);
     //cargoarm=false;//TO DO reverse if needed
@@ -200,7 +204,7 @@ void Robot::armcontrol(){
     //centergriparm.Set(DoubleSolenoid::kForward);
 
   
-  if (operatorstick.GetRawButtonPressed(4)){
+  if (operatorstick.GetRawButtonPressed(3)){
     centergriparm.Set(DoubleSolenoid::kForward);
     //gripers.Set(1);
     //cargoarm=true;
@@ -225,21 +229,21 @@ else {
     anglearm.SetSetpoint(armEncoder.PIDGet());
     anglearm.Enable();
   }
-  if (operatorstick.GetRawButton(5))//TO DO change buttons
+  if (operatorstick.GetRawButton(4))//TO DO change buttons
     anglearm.SetSetpoint(farbackarm);//Add the angles
-  if (operatorstick.GetRawButton(12))
-    anglearm.SetSetpoint(farfrontarm);
   if (operatorstick.GetRawButton(11))
-    anglearm.SetSetpoint(fronthatch);
-  if (operatorstick.GetRawButton(6))
-    anglearm.SetSetpoint(hatch);
-  if (operatorstick.GetRawButton(9))
-    anglearm.SetSetpoint(frontbay);
-  if (operatorstick.GetRawButton(8))
-    anglearm.SetSetpoint(shootbay);
-  if (operatorstick.GetRawButton(7))
-    anglearm.SetSetpoint(shootrocket);
+    anglearm.SetSetpoint(farfrontarm);
   if (operatorstick.GetRawButton(10))
+    anglearm.SetSetpoint(fronthatch);
+  if (operatorstick.GetRawButton(5))
+    anglearm.SetSetpoint(hatch);
+  if (operatorstick.GetRawButton(8))
+    anglearm.SetSetpoint(frontbay);
+  if (operatorstick.GetRawButton(7))
+    anglearm.SetSetpoint(shootbay);
+  if (operatorstick.GetRawButton(6))
+    anglearm.SetSetpoint(shootrocket);
+  if (operatorstick.GetRawButton(9))
     anglearm.SetSetpoint(frontrocket);
   
 }

@@ -39,7 +39,9 @@ class Robot : public frc::TimedRobot {
 
   ::WPI_TalonSRX rightfangw{9};
   ::WPI_TalonSRX leftfangw{10};
-  ::WPI_TalonSRX centerfang{11};
+  ::WPI_TalonSRX centerfang1{11};
+  ::WPI_TalonSRX centerfang2{12};
+  frc::SpeedControlerGroup centerfang
   frc::SpeedControllerGroup fangs {rightfangw,leftfangw};
   frc::DifferentialDrive equalup {left,centerfang};
   frc::DoubleSolenoid centergriparm {4,5},
