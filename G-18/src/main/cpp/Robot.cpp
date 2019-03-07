@@ -226,10 +226,10 @@ void Robot::armcontrol(){
   }
   else{
     double speedgrip=operatorstick.GetRawAxis(0);
-    if (speedgrip<0) 
+    if (speedgrip>0) 
      speedgrip*=.75;//setting speed for the griper wheels
 
-    gripers.Set(-speedgrip);//To Do reverse if needed, and check speed
+    gripers.Set(speedgrip);//To Do reverse if needed, and check speed
    }
   }
 }
@@ -237,7 +237,7 @@ void Robot::armdegree(){
 double armX=operatorstick.GetRawAxis(1);
 if (std::abs(armX)>.1){
   anglearm.Disable();
-  arms.Set (-armX*.2);//TO DO reverse if nessicary
+  arms.Set (armX*.2);//TO DO reverse if nessicary
 }
 else {
   if (!anglearm.IsEnabled()){
