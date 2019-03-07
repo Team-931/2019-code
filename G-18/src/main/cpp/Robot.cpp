@@ -60,7 +60,7 @@ void Robot::RobotInit() {
 }
 
 static int gripperDisplayBit = 0;
-static constexpr int armButtonBase = 4;//TODO confirm this
+static constexpr int armButtonBase = 3;//TODO confirm this
 
 /**
  * This function is called every robot packet, no matter the mode. Use
@@ -166,7 +166,7 @@ void Robot::TeleopPeriodic() {
   if (endgamephase==0){
   robotcontrol();
   armcontrol();
-  if (operatorstick.GetRawButton(1)/* &&operatorstick.GetRawButton(2) */){
+  if (operatorstick.GetRawButton(11)/* &&operatorstick.GetRawButton(2) */){
     endgameinit();
   }
  }
@@ -208,9 +208,9 @@ void Robot::robotcontrol() {
 }
 void Robot::armcontrol(){
   armdegree();
-  if (operatorstick.GetRawButtonPressed(2)){
+  if (operatorstick.GetRawButtonPressed(1)){
     centergriparm.Set(DoubleSolenoid::kReverse);//lost front wheels so just having open and close
-    gripperDisplayBit = 2;
+    gripperDisplayBit = 1;
     //gripers.Set(-1);
     //cargoarm=false;//TO DO reverse if needed
   }
@@ -218,9 +218,9 @@ void Robot::armcontrol(){
     //centergriparm.Set(DoubleSolenoid::kForward);
 
   
-  if (operatorstick.GetRawButtonPressed(3)){
+  if (operatorstick.GetRawButtonPressed(2)){
     centergriparm.Set(DoubleSolenoid::kForward);
-    gripperDisplayBit = 4;
+    gripperDisplayBit = 2;
     //gripers.Set(1);
     //cargoarm=true;
   }
