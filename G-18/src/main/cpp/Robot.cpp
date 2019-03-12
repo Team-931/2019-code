@@ -60,6 +60,9 @@ void Robot::RobotInit() {
   equalup.SetSafetyEnabled(false);
 }
 
+static int gripperDisplayBit = 0;
+static constexpr int armButtonBase = 3;//TODO confirm this
+
 /**
  * This function is called every robot packet, no matter the mode. Use
  * this for items like diagnostics that you want ran during disabled,
@@ -78,7 +81,21 @@ void Robot::RobotPeriodic() {
       outputCam.SetSource(frontCam);
       frc::SmartDashboard::PutBoolean("Rear view", false);
     }
-
+  {//report arm position to operator console
+    int buttonBit = 1<<(armButtonBase-1);
+    int armPos = armEncoder.Get();
+    int level = armPositions[0];
+    const int tolerance = 2;
+    for (int ix = 1; ix < armPositionCt; ++ix) {
+      if (level + tolerance >= armPos) break;
+      if ((level = armPositions[ix]) - tolerance > armPos) {
+        buttonBit *= 3;
+        break;
+      }
+      buttonBit <<= 1;
+    }
+    operatorstick.SetOutputs(buttonBit | gripperDisplayBit);
+  }
   frc::SmartDashboard::PutNumber ("Left encoder", leftEncoder.Get());
   frc::SmartDashboard::PutNumber ("Right encoder", rightEncoder.Get());
   frc::SmartDashboard::PutNumber ("Yaw", (int) navx.GetYaw());
@@ -150,7 +167,7 @@ void Robot::TeleopPeriodic() {
   if (endgamephase==0){
   robotcontrol();
   armcontrol();
-  if (operatorstick.GetRawButton(1)){
+  if (operatorstick.GetRawButton(11)/* &&operatorstick.GetRawButton(2) */){
     endgameinit();
   }
  }
@@ -192,8 +209,9 @@ void Robot::robotcontrol() {
 }
 void Robot::armcontrol(){
   armdegree();
-  if (operatorstick.GetRawButtonPressed(2)){
+  if (operatorstick.GetRawButtonPressed(1)){
     centergriparm.Set(DoubleSolenoid::kReverse);//lost front wheels so just having open and close
+    gripperDisplayBit = 1;
     //gripers.Set(-1);
     //cargoarm=false;//TO DO reverse if needed
   }
@@ -201,17 +219,18 @@ void Robot::armcontrol(){
     //centergriparm.Set(DoubleSolenoid::kForward);
 
   
-  if (operatorstick.GetRawButtonPressed(3)){
+  if (operatorstick.GetRawButtonPressed(2)){
     centergriparm.Set(DoubleSolenoid::kForward);
+    gripperDisplayBit = 2;
     //gripers.Set(1);
     //cargoarm=true;
   }
   else{
     double speedgrip=operatorstick.GetRawAxis(0);
-    if (speedgrip<0) 
+    if (speedgrip>0) 
      speedgrip*=.75;//setting speed for the griper wheels
 
-    gripers.Set(-speedgrip);//To Do reverse if needed, and check speed
+    gripers.Set(speedgrip);//To Do reverse if needed, and check speed
    }
   }
 }
@@ -219,29 +238,18 @@ void Robot::armdegree(){
 double armX=operatorstick.GetRawAxis(1);
 if (std::abs(armX)>.1){
   anglearm.Disable();
-  arms.Set (-armX*.2);//TO DO reverse if nessicary
+  arms.Set (armX*.2);//TO DO reverse if nessicary
 }
 else {
   if (!anglearm.IsEnabled()){
     anglearm.SetSetpoint(armEncoder.PIDGet());
     anglearm.Enable();
   }
-  if (operatorstick.GetRawButton(4))//TO DO change buttons
-    anglearm.SetSetpoint(farbackarm);//Add the angles
-  if (operatorstick.GetRawButton(11))
-    anglearm.SetSetpoint(farfrontarm);
-  if (operatorstick.GetRawButton(10))
-    anglearm.SetSetpoint(fronthatch);
-  if (operatorstick.GetRawButton(5))
-    anglearm.SetSetpoint(hatch);
-  if (operatorstick.GetRawButton(8))
-    anglearm.SetSetpoint(frontbay);
-  if (operatorstick.GetRawButton(7))
-    anglearm.SetSetpoint(shootbay);
-  if (operatorstick.GetRawButton(6))
-    anglearm.SetSetpoint(shootrocket);
-  if (operatorstick.GetRawButton(9))
-    anglearm.SetSetpoint(frontrocket);
+  
+  for (int ix = 0; ix < armPositionCt; ++ix)
+    if(operatorstick.GetRawButton(ix+armButtonBase))// 3 is the first arm setting button now
+      anglearm.SetSetpoint (armPositions[ix]);
+
   
 }
 }
