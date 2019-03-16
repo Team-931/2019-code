@@ -63,7 +63,7 @@ class Robot : public frc::TimedRobot {
   frc::Joystick operatorstick{1};
   //Climb either dashboard or press buttons
 
-  bool arcadedrive {true};
+  bool arcadedrive {false};
 
   //bool  cargoarm {true};
 
@@ -92,8 +92,8 @@ class Robot : public frc::TimedRobot {
   const std::string autoForward = "off platform";
   std::string m_autoSelected;
   ::AHRS navx {::SPI::kMXP};
-  constexpr static double farbackarm=(-74), farfrontarm=(73), startingposition=0,
-  endgame=(19), shootrocket=(-46), shootbay=(-36), vertical=(0), hatch=(-56),
+  constexpr static double farbackarm=(-70), farfrontarm=(70), startingposition=0,
+  endgame=(19), shootrocket=(-42), shootbay=(-30), vertical=(0), hatch=(-53),
   fronthatch=(53), frontrocket=(44), frontbay=(31);
   const static double armPositions[];
   const static int armPositionCt;// = sizeof (Robot::armPositions) / sizeof (double);

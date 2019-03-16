@@ -46,16 +46,18 @@ static constexpr double phase2speed = .25;
 void Robot::endgameperiodic(){//wheels, fangs, wheel fangs,  
  if (endgamephase==1){
      fangs.Set(1);
-     centerfang.Set(-fangspeed);
+     centerfang.Set(fangspeed);
      left.Set(pogospeed);//reverse if needed, left wheels are what the power take off is conected to
      right.StopMotor();
+     
   if (limitpogo.Get())//sync fangs and pogosticks
    pogospeed=phase2speed;
+   right.Set(-.2);
  //  liftcontroller->Disable();
    //liftcontroller->speed = phase2speed;
    //liftcontroller->SetSetpoint(2);//nose down
   if (limitfang.Get())
-  fangspeed=3*phase2speed;
+  fangspeed=phase2speed;
   
  
  //if (endgamephase==2){
@@ -75,16 +77,16 @@ void Robot::endgameperiodic(){//wheels, fangs, wheel fangs,
  if (endgamephase==3){
      fangs.Set(1);
      centerfang.Set(.1);
- if (time.Get()>10)//TO DO change time
+ if (time.Get()>8.5)//TO DO change time
    endgamephase=4;
    return;
  }
  if (endgamephase==4){
    centerfang.Set(0);
-    driver.ArcadeDrive(phase2speed,0);
+    driver.ArcadeDrive(phase2speed,0,false);
   fangs.Set(0); //or 0
- if (time.Get()>12)//TO DO change time
-   endgamephase=5;
+ if (time.Get()>9)//TO DO change time
+   endgamephase= 0/* 5 */;
    return;
  }
  if (endgamephase==5)
