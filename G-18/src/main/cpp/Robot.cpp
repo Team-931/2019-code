@@ -189,9 +189,9 @@ void Robot::robotcontrol() {
   if (!driverstick.GetRawButton(1))
     if (arcadedrive) 
       if (outputCam.GetSource()==rearCam)
-       driver.ArcadeDrive (driverstick.GetRawAxis (1),driverstick.GetRawAxis (0),true);//This is so the front changes with the camera
+       driver.ArcadeDrive (driverstick.GetRawAxis (1),driverstick.GetRawAxis (4),true);//This is so the front changes with the camera
       else
-      driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (0),true);//TO DO reverse
+      driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (4),true);//TO DO reverse
        
     else 
       if (outputCam.GetSource()==frontCam)
