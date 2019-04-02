@@ -22,11 +22,11 @@ class Robot : public frc::TimedRobot {
   cs::UsbCamera frontCam{"Front Cam", 0}, rearCam{"Rear Cam", 1};
   cs::MjpegServer outputCam {frc::CameraServer::GetInstance()->AddSwitchedCamera("Output Cam")};
 
-  ::WPI_TalonSRX rightfront{1};
-  ::WPI_TalonSRX rightback{2};
+  ::WPI_TalonSRX rightfront{31};
+  ::WPI_VictorSPX rightback{41};
   frc::SpeedControllerGroup right {rightfront,rightback};
-  ::WPI_TalonSRX leftfront{3};
-  ::WPI_TalonSRX leftback{4};
+  ::WPI_TalonSRX leftfront{30};
+  ::WPI_VictorSPX leftback{40};
   frc::SpeedControllerGroup left {leftfront,leftback};
   frc::DifferentialDrive driver {left,right};//TO DO check weather left or right needs to be inverted
 
@@ -92,9 +92,9 @@ class Robot : public frc::TimedRobot {
   const std::string autoForward = "off platform";
   std::string m_autoSelected;
   ::AHRS navx {::SPI::kMXP};
-  constexpr static double farbackarm=(-70), farfrontarm=(70), startingposition=0,
-  endgame=(19), shootrocket=(-42), shootbay=(-30), vertical=(0), hatch=(-53),
-  fronthatch=(53), frontrocket=(44), frontbay=(31);
+  constexpr static double farbackarm=(-70), farfrontarm=(70), endgame=(19), 
+  shootrocket=(-42), shootbay=(-30), vertical=(0), hatch=(-53), fronthatch=(53),
+ frontrocket=(44), frontbay=(31);
   const static double armPositions[];
   const static int armPositionCt;// = sizeof (Robot::armPositions) / sizeof (double);
 

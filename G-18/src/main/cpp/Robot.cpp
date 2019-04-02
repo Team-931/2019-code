@@ -180,6 +180,7 @@ void Robot::TeleopPeriodic() {
 void Robot::TestPeriodic() {}
 
 void Robot::robotcontrol() {
+  double driverspeed=.8;
   fangs.Set (driverstick.GetRawButton(3)) ;
   centerfang.Set(-driverstick.GetRawButton(6));
   if (driverstick.GetRawButtonPressed(7))
@@ -189,15 +190,15 @@ void Robot::robotcontrol() {
   if (!driverstick.GetRawButton(1))
     if (arcadedrive) 
       if (outputCam.GetSource()==rearCam)
-       driver.ArcadeDrive (driverstick.GetRawAxis (1),driverstick.GetRawAxis (0),true);//This is so the front changes with the camera
+       driver.ArcadeDrive (driverstick.GetRawAxis (1)*driverspeed,driverstick.GetRawAxis (4)*driverspeed,true);//This is so the front changes with the camera
       else
-      driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (0),true);//TO DO reverse
+      driver.ArcadeDrive (-driverstick.GetRawAxis (1)*driverspeed,driverstick.GetRawAxis (4)*driverspeed,true);//TO DO reverse
        
     else 
       if (outputCam.GetSource()==frontCam)
-       driver.TankDrive (-driverstick.GetRawAxis (1),-driverstick.GetRawAxis (5),true); 
+       driver.TankDrive (-driverstick.GetRawAxis (1)*driverspeed,-driverstick.GetRawAxis (5)*driverspeed,true); 
       else 
-       driver.TankDrive (driverstick.GetRawAxis (5),driverstick.GetRawAxis (1),true); 
+       driver.TankDrive (driverstick.GetRawAxis (5)*driverspeed,driverstick.GetRawAxis (1)*driverspeed,true); 
      else
     if (usethresshold(rightsensor)) 
      if (usethresshold(leftsensor))
@@ -249,7 +250,9 @@ else {
     anglearm.SetSetpoint(armEncoder.PIDGet());
     anglearm.Enable();
   }
-  
+  if(operatorstick.GetRawButton (6)&&operatorstick.GetRawButton (7))
+    anglearm.SetSetpoint (vertical);
+  else
   for (int ix = 0; ix < armPositionCt; ++ix)
     if(operatorstick.GetRawButton(ix+armButtonBase))// 3 is the first arm setting button now
       anglearm.SetSetpoint (armPositions[ix]);
