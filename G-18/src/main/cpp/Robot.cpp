@@ -124,6 +124,8 @@ void Robot::AutonomousInit() {
   anglearm.SetP(armP);
 
   centertakeoff.Set(DoubleSolenoid::kForward);
+  centertakeoff2.Set(DoubleSolenoid::kForward);
+
   centergriparm.Set(DoubleSolenoid::kForward);
   gripperDisplayBit = 2;
 
@@ -165,9 +167,36 @@ void Robot::TeleopInit() {
   anglearm.SetP(armP);
   endgamephase = 0;
 }
+
+void Robot::endgameTeleop() {
+  { // driver control of fangs' forward motion
+    int pov = endgamestick.GetPOV();
+    if(pov == 0 && !limitfang.Get()) centerfang.Set (1);
+    else if(pov == 180) centerfang.Set (-1);
+    else centerfang.Set(0);
+  }
+  //centerfang.Set(-driverstick.GetRawButton(6));
+  {//driver  control of pogosticks
+    static bool pogodown= false;
+    pogodown ^= endgamestick.GetRawButtonPressed(6);
+    if (pogodown) {
+      centertakeoff.Set(DoubleSolenoid::kReverse);
+      centertakeoff2.Set(DoubleSolenoid::kReverse);
+      fangs.Set (1);
+    }
+    else 
+    { centertakeoff.Set(DoubleSolenoid::kForward);
+      centertakeoff2.Set(DoubleSolenoid::kForward);
+      fangs.Set (driverstick.GetRawButton(3)) ;
+      }
+  }
+  
+}
+
 //invert fangs completly
 void Robot::TeleopPeriodic() {
   if (endgamephase==0){
+    endgameTeleop();
   robotcontrol();
   armcontrol();
   if (operatorstick.GetRawButton(11)/* &&operatorstick.GetRawButton(2) */){
@@ -180,8 +209,7 @@ void Robot::TeleopPeriodic() {
 void Robot::TestPeriodic() {}
 
 void Robot::robotcontrol() {
-  fangs.Set (driverstick.GetRawButton(3)) ;
-  centerfang.Set(-driverstick.GetRawButton(6));
+  gripers.Set (-.05);
   if (driverstick.GetRawButtonPressed(7))
   arcadedrive=true;
   else if (driverstick.GetRawButtonPressed(8))
@@ -189,15 +217,15 @@ void Robot::robotcontrol() {
   if (!driverstick.GetRawButton(1))
     if (arcadedrive) 
       if (outputCam.GetSource()==rearCam)
-       driver.ArcadeDrive (driverstick.GetRawAxis (1),driverstick.GetRawAxis (4),true);//This is so the front changes with the camera
+       driver.ArcadeDrive (driverstick.GetY(),driverstick.GetZ()/*driverstick.GetRawAxis (1)*.8,driverstick.GetRawAxis (2)*.8*/,true);//This is so the front changes with the camera
       else
-      driver.ArcadeDrive (-driverstick.GetRawAxis (1),driverstick.GetRawAxis (4),true);//TO DO reverse
+      driver.ArcadeDrive (-driverstick.GetY(),driverstick.GetZ()/*-driverstick.GetRawAxis (1)/*.8,driverstick.GetRawAxis (2*.8)*/,true);//TO DO reverse
        
     else 
       if (outputCam.GetSource()==frontCam)
-       driver.TankDrive (-driverstick.GetRawAxis (1),-driverstick.GetRawAxis (5),true); 
+       driver.TankDrive (-driverstick.GetRawAxis (1)/*times .8*/*.8,-driverstick.GetRawAxis (3)/*times .8*/*.8,true); 
       else 
-       driver.TankDrive (driverstick.GetRawAxis (5),driverstick.GetRawAxis (1),true); 
+       driver.TankDrive (driverstick.GetRawAxis (3)/*times .8*/*.8,driverstick.GetRawAxis (1)/*times .8*/*.8,true); 
      else
     if (usethresshold(rightsensor)) 
      if (usethresshold(leftsensor))
@@ -219,7 +247,7 @@ void Robot::armcontrol(){
     //gripers.Set(-1);
     //cargoarm=false;//TO DO reverse if needed
   }
-  else{ 
+ 
     //centergriparm.Set(DoubleSolenoid::kForward);
 
   
@@ -235,7 +263,7 @@ void Robot::armcontrol(){
      speedgrip*=.75;//setting speed for the griper wheels
 
     gripers.Set(-speedgrip);//To Do reverse if needed, and check speed
-   }
+   
   }
 }
 void Robot::armdegree(){

@@ -45,8 +45,7 @@ class Robot : public frc::TimedRobot {
   frc::SpeedControllerGroup fangs {rightfangw,leftfangw};
   frc::DifferentialDrive equalup {left,centerfang};
   frc::DoubleSolenoid centergriparm {4,5},
-    centertakeoff {6,7};
-
+    centertakeoff {6,7},centertakeoff2 {1,0};
   frc::DigitalInput limitpogo{4};
   frc::DigitalInput limitfang{5};
   frc::AnalogInput leftsensor{0};
@@ -61,6 +60,8 @@ class Robot : public frc::TimedRobot {
 //stating user interface items
   frc::Joystick driverstick{0};
   frc::Joystick operatorstick{1};
+  frc::Joystick endgamestick{2};
+
   //Climb either dashboard or press buttons
 
   bool arcadedrive {false};
@@ -83,6 +84,7 @@ class Robot : public frc::TimedRobot {
   void TeleopInit() override;
   void TeleopPeriodic() override;
   void TestPeriodic() override;
+  void endgameTeleop();
 
  private:
   double armP = .02;
